@@ -6,7 +6,7 @@ import domain.group.models.GroupUpdateModel
 
 class GroupServiceImpl(private val groupRepository: GroupRepository) : GroupService {
     override fun getAllGroups(): List<Group> {
-        return groupRepository.getAllGroups();
+        return groupRepository.getAllGroups()
     }
 
     override fun getGroupById(id: String): Group? {
@@ -14,7 +14,7 @@ class GroupServiceImpl(private val groupRepository: GroupRepository) : GroupServ
     }
 
     override fun createGroup(group: GroupCreateModel): Group {
-        return groupRepository.createGroup(group);
+        return groupRepository.createGroup(group)
     }
 
     override fun updateGroup(group: GroupUpdateModel): Group {

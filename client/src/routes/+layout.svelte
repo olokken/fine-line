@@ -5,6 +5,9 @@
 	import { signInIfNotAuthenticated } from '$lib/auth/auth';
 	import { browser } from '$app/environment';
 	import { tokenCookieName } from '$lib/utils/constants';
+	import AppBar from '../components/layout/AppBar.svelte';
+	import Sidebar from '../components/layout/SideBar.svelte';
+	import Body from '../components/layout/Content.svelte';
 
 	let { children }: { data: LayoutData; children: Snippet } = $props();
 
@@ -21,4 +24,11 @@
 	}
 </script>
 
-{@render children()}
+<AppBar />
+<div class="flex">
+	<Sidebar />
+
+	<Body>
+		{@render children()}
+	</Body>
+</div>
