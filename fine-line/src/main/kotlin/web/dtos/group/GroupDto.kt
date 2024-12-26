@@ -8,6 +8,6 @@ import java.util.UUID
 data class GroupDto(val id: String, val name: String);
 
 fun Group.toGroupDto(): GroupDto {
-    return GroupDto(id = this.id.toString(), name = this.name)
+    return GroupDto(id = this.groupId.toString(), name = this.name)
 }
 

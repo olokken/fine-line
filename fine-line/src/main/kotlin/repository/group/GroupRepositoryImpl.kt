@@ -1,25 +1,34 @@
 package repository.group
 
+import common.either.Either
+import common.either.left
+import common.either.right
+import common.error.RepositoryError
+import common.error.toRepositoryError
 import domain.group.GroupRepository
 import domain.group.models.Group
 import domain.group.models.GroupCreateModel
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import repository.configurations.GroupDAO
+import repository.configurations.GroupTable
 
 class GroupRepositoryImpl : GroupRepository {
     override fun getAllGroups(): List<Group> {
         return transaction {
-            GroupDAO.all().map(GroupDAO::toDomainModel).toList();
+            GroupTable.selectAll().map { row -> mapToGroup(row) };
         }
     }
 
-    override fun createGroup(group: GroupCreateModel): Group {
-        return transaction {
-            val groupDAO = GroupDAO.new {
-                this.name = group.name
-            };
-
-            groupDAO.toDomainModel();
+    override fun createGroup(group: GroupCreateModel): Either<RepositoryError, Int> {
+        return try {
+            Either.Right(transaction {
+                GroupTable.insert { row ->
+                    row[name] = group.name
+                } get GroupTable.groupId
+            })
+        } catch (error: Throwable) {
+            error.toRepositoryError().left()
         }
     }
 }

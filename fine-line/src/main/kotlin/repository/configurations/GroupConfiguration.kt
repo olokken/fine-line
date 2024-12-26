@@ -1,16 +1,10 @@
 package repository.configurations
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.Table
 
-object GroupTable : IntIdTable("groups") {
+object GroupTable : Table("groups") {
+    val groupId = integer("groupId").autoIncrement()
     val name = varchar("name", 50)
-}
 
-class GroupDAO(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<GroupDAO>(GroupTable)
-
-    var name by GroupTable.name
+    override val primaryKey = PrimaryKey(groupId, name = "pk_group")
 }

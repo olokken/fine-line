@@ -1,11 +1,13 @@
 package repository.group
 
 import domain.group.models.Group
-import repository.configurations.GroupDAO
+import org.jetbrains.exposed.sql.ResultRow
+import repository.configurations.GroupTable
 
-fun GroupDAO.toDomainModel(): Group {
+fun mapToGroup(row: ResultRow): Group {
     return Group(
-        id = this.id.value,
-        name = this.name,
+        groupId = row[GroupTable.groupId],
+        name = row[GroupTable.name],
+        admins = emptyList()
     )
 }

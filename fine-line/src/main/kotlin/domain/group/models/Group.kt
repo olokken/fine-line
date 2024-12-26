@@ -1,7 +1,7 @@
 package domain.group.models
 
-import java.util.UUID
+import domain.user.models.User
 
 data class Group(
-    val id: Int, val name: String
+    val groupId: Int, val name: String, val admins: List<User>
 )

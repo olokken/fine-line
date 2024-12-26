@@ -1,13 +1,11 @@
 package domain.group
 
+import common.either.Either
+import common.error.ErrorResponse
 import domain.group.models.Group
 import domain.group.models.GroupCreateModel
-import domain.group.models.GroupUpdateModel
 
 interface GroupService {
     fun getAllGroups(): List<Group>
-    fun getGroupById(id: String): Group?
-    fun createGroup(group: GroupCreateModel): Group
-    fun updateGroup(group: GroupUpdateModel): Group
-    fun deleteGroup(id: Int): Boolean
+    fun createGroup(group: GroupCreateModel): Either<ErrorResponse, Group>
 }

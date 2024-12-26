@@ -1,27 +1,33 @@
 package domain.group
 
+import common.either.Either
+import common.either.flatMap
+import common.either.mapLeft
+import common.either.mapRight
+import common.error.ErrorResponse
 import domain.group.models.Group
 import domain.group.models.GroupCreateModel
-import domain.group.models.GroupUpdateModel
+import domain.membership.MembershipService
+import org.jetbrains.exposed.sql.transactions.transaction
 
-class GroupServiceImpl(private val groupRepository: GroupRepository) : GroupService {
+class GroupServiceImpl(private val groupRepository: GroupRepository, private val membershipService: MembershipService) : GroupService {
     override fun getAllGroups(): List<Group> {
         return groupRepository.getAllGroups()
     }
 
-    override fun getGroupById(id: String): Group? {
-        TODO("Not yet implemented")
-    }
-
-    override fun createGroup(group: GroupCreateModel): Group {
-        return groupRepository.createGroup(group)
-    }
-
-    override fun updateGroup(group: GroupUpdateModel): Group {
-        TODO("Not yet implemented")
-    }
-
-    override fun deleteGroup(id: Int): Boolean {
-        TODO("Not yet implemented")
+    override fun createGroup(group: GroupCreateModel): Either<ErrorResponse, Group> =
+    transaction {
+        groupRepository.createGroup(group)
+            .mapLeft { ErrorResponse(500, "Error creating group") }
+            .flatMap { groupId ->
+                membershipService.addMember(group.creatorId, groupId, true)
+                    .mapRight {
+                        Group(
+                            groupId = groupId,
+                            name = group.name,
+                            admins = emptyList()
+                        )
+                    }
+            }
     }
 }
