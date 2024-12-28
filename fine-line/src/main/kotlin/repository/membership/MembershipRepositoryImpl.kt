@@ -21,10 +21,10 @@ class MembershipRepositoryImpl : MembershipRepository {
                     row[UserGroupTable.isAdmin] = isAdmin
                 }
             }
-            true.right()
+            Either.Right(true)
         }
         catch (error: Throwable) {
-            error.toRepositoryError().left()
+            Either.Left(error.toRepositoryError())
         }
     }
 }

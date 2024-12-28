@@ -1,5 +1,8 @@
 package domain.user.models
 
+import common.either.Either
+import common.error.ErrorResponse
+
 interface UserService {
-    fun createOrUpdateUser(userId: String, name: String);
+    fun createOrGetUser(user: User): Either<ErrorResponse, User>
 }

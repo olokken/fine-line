@@ -1,4 +1,3 @@
-import { tokenCookieName } from '$lib/utils/constants';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 
 export type RequestMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'PATCH';
@@ -16,8 +15,12 @@ const getHeaders = (token: string): HeadersInit => {
 	return headersInit;
 };
 
-const getTokenFromEvent = (event: ServerLoadEvent): string => {
-	const token = event.cookies.get(tokenCookieName);
+const getTokenFromEvent = async (event: ServerLoadEvent): Promise<string> => {
+	const session = await event.locals.auth();
+
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	//@ts-ignore
+	const token = session.sessionToken as string;
 
 	return token ?? '';
 };
@@ -42,12 +45,12 @@ export type ApiResponse<T = unknown> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 export const fetchData = async <T, U = unknown>(
 	event: ServerLoadEvent,
-	url: string,
+	endpoint: string,
 	requestMethod: RequestMethod,
 	body?: U
 ): Promise<ApiResponse<T>> => {
 	try {
-		const token = getTokenFromEvent(event);
+		const token = await getTokenFromEvent(event);
 		const requestInit: RequestInit = {
 			method: requestMethod,
 			headers: getHeaders(token)
@@ -57,7 +60,9 @@ export const fetchData = async <T, U = unknown>(
 			requestInit.body = body instanceof FormData ? body : JSON.stringify(body);
 		}
 
-		const response = await fetch(url, requestInit);
+		const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+		const response = await fetch(`${baseUrl}${endpoint}`, requestInit);
 
 		if (response.ok) {
 			return { ok: true, data: (await response.json()) as T };

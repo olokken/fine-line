@@ -1,8 +1,6 @@
 package repository.group
 
 import common.either.Either
-import common.either.left
-import common.either.right
 import common.error.RepositoryError
 import common.error.toRepositoryError
 import domain.group.GroupRepository
@@ -28,7 +26,7 @@ class GroupRepositoryImpl : GroupRepository {
                 } get GroupTable.groupId
             })
         } catch (error: Throwable) {
-            error.toRepositoryError().left()
+            Either.Left(error.toRepositoryError())
         }
     }
 }

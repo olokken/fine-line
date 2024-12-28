@@ -1,3 +1,6 @@
 package domain.user.models
 
-data class User(val uuid: String, val name: String)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class User(val userId: String, val name: String)

@@ -5,15 +5,20 @@
 	import AppBar from '../components/layout/AppBar.svelte';
 	import Sidebar from '../components/layout/SideBar.svelte';
 	import Body from '../components/layout/Content.svelte';
-	import { signIn } from "@auth/sveltekit/client"
+	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { browser } from '$app/environment';
-	
+	import { initializeStores } from '@skeletonlabs/skeleton';
+
 	let { children, data }: { data: LayoutData; children: Snippet } = $props();
+	initializeStores();
 
-	if(browser) {		
-		if(!data.session) signIn()
+	if (browser) {
+		if (!data.session) signIn();
+		//@ts-ignore
+		if (!data.session.sessionToken) {
+			signOut();
+		}
 	}
-
 </script>
 
 <AppBar />

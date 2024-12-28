@@ -7,6 +7,9 @@ import domain.group.GroupServiceImpl
 import domain.membership.MembershipRepository
 import domain.membership.MembershipService
 import domain.membership.MembershipServiceImpl
+import domain.user.UserRepository
+import domain.user.UserServiceImpl
+import domain.user.models.UserService
 import io.github.cdimascio.dotenv.dotenv
 import io.ktor.server.application.*
 import org.koin.dsl.module
@@ -20,6 +23,9 @@ import kotlinx.serialization.json.Json
 import repository.group.GroupRepositoryImpl
 import repository.membership.MembershipRepositoryImpl
 import io.ktor.server.auth.jwt.jwt
+import org.koin.dsl.single
+import repository.user.UserRepositoryImpl
+import web.controllers.UserController
 import java.net.URL
 
 fun Application.configureFrameworks() {
@@ -30,13 +36,16 @@ fun Application.configureFrameworks() {
             //Repositories
             single<MembershipRepository> { MembershipRepositoryImpl() }
             single<GroupRepository> { GroupRepositoryImpl() }
+            single<UserRepository> { UserRepositoryImpl() }
 
             //Services
             single<MembershipService> { MembershipServiceImpl(get()) }
             single<GroupService> { GroupServiceImpl(get(), get()) }
+            single<UserService> { UserServiceImpl(get()) }
 
             //Controllers
             single { GroupController(get()) }
+            single { UserController(get()) }
         })
     }
 
