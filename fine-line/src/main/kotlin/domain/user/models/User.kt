@@ -1,6 +1,5 @@
 package domain.user.models
 
-import kotlinx.serialization.Serializable
+import domain.group.models.Group
 
-@Serializable
-data class User(val userId: String, val name: String)
+data class User(val userId: String, val name: String, val groups: List<Group>)

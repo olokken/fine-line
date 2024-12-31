@@ -12,6 +12,7 @@ import web.dtos.group.GroupCreateDto
 import web.dtos.group.GroupDto
 import web.dtos.group.toGroupDto
 import web.dtos.group.toModel
+import web.utils.getUserIdFromToken
 
 class GroupController(private val groupService: GroupService) {
     fun setUpRoutes(route: Route) {
@@ -28,13 +29,20 @@ class GroupController(private val groupService: GroupService) {
 
     suspend fun createGroup(call: ApplicationCall) {
         val dto = call.receive<GroupCreateDto>();
-        val createGroupModel: GroupCreateModel = dto.toModel("siuu")
+        val userId = getUserIdFromToken(call)
+
+        if(userId == null) return call.respondText(
+            status = HttpStatusCode.fromValue(403),
+            text = "Invalid token"
+        )
+
+        val createGroupModel: GroupCreateModel = dto.toModel(userId)
         groupService.createGroup(createGroupModel).foldSuspend({ error ->
             call.respondText(
                 status = HttpStatusCode.fromValue(error.statusCode),
                 text = error.message
             )
-        }, { group -> call.respond(group) })
+        }, { group -> call.respond(group.toGroupDto()) })
     }
 
     suspend fun getGroups(call: ApplicationCall) {

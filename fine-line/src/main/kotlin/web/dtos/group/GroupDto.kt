@@ -5,9 +5,8 @@ import kotlinx.serialization.Serializable
 import java.util.UUID
 
 @Serializable
-data class GroupDto(val id: String, val name: String);
+data class GroupDto(val groupId: Int, val name: String);
 
 fun Group.toGroupDto(): GroupDto {
-    return GroupDto(id = this.groupId.toString(), name = this.name)
+    return GroupDto(groupId = this.groupId, name = this.name)
 }
-

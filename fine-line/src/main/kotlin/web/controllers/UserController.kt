@@ -2,7 +2,7 @@ package web.controllers
 
 import com.auth0.jwt.JWT
 import common.either.foldSuspend
-import domain.user.models.User
+import domain.user.models.CreateUserModel
 import domain.user.models.UserService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -11,6 +11,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.*
+import web.dtos.user.toUserDto
 
 class UserController(private val userService: UserService) {
     fun setUpRoutes(route: Route) {
@@ -37,11 +38,11 @@ class UserController(private val userService: UserService) {
                         text = error.message
                     )
                 },
-                { user -> call.respond(user) }
+                { user -> call.respond(user.toUserDto()) }
             )
     }
 
-    private fun mapUserFromToken(call: ApplicationCall): User? {
+    private fun mapUserFromToken(call: ApplicationCall): CreateUserModel? {
         val header = call.request.headers["Authorization"]
         if (header == null) return null
 
@@ -51,6 +52,6 @@ class UserController(private val userService: UserService) {
         val userId = jwt.getClaim("sub").asString()
         val userName = jwt.getClaim("preferred_username").asString()
 
-        return User(userId, userName)
+        return CreateUserModel(userId, userName)
     }
 }

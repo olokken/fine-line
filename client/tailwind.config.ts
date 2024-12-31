@@ -17,8 +17,8 @@ const config = {
 				content: 'calc(100vh - 6rem)'
 			},
 			width: {
-				sidebar: '14rem',
-				content: 'calc(100vw - 14rem)'
+				sidebar: '20rem',
+				content: 'calc(100vw - 20rem)'
 			}
 		}
 	},

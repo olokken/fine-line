@@ -11,6 +11,8 @@ import domain.user.UserRepository
 import domain.user.UserServiceImpl
 import domain.user.models.UserService
 import io.github.cdimascio.dotenv.dotenv
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
@@ -23,13 +25,32 @@ import kotlinx.serialization.json.Json
 import repository.group.GroupRepositoryImpl
 import repository.membership.MembershipRepositoryImpl
 import io.ktor.server.auth.jwt.jwt
-import org.koin.dsl.single
+import io.ktor.server.plugins.cors.routing.*
 import repository.user.UserRepositoryImpl
+import web.controllers.MembershipController
 import web.controllers.UserController
 import java.net.URL
 
 fun Application.configureFrameworks() {
     val dotenv = dotenv {}
+
+    install(CORS) {
+        anyHost()
+
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Options)
+
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.Accept)
+
+        allowCredentials = true
+        exposeHeader(HttpHeaders.ContentDisposition)
+        maxAgeInSeconds = 3600
+    }
 
     install(Koin) {
         modules(module {
@@ -46,6 +67,7 @@ fun Application.configureFrameworks() {
             //Controllers
             single { GroupController(get()) }
             single { UserController(get()) }
+            single { MembershipController(get()) }
         })
     }
 

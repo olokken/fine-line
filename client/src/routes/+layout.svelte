@@ -7,10 +7,14 @@
 	import Body from '../components/layout/Content.svelte';
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { browser } from '$app/environment';
-	import { initializeStores } from '@skeletonlabs/skeleton';
+	import { initializeStores, Toast } from '@skeletonlabs/skeleton';
+	import { userId, userName } from '$lib/stores/user';
 
 	let { children, data }: { data: LayoutData; children: Snippet } = $props();
 	initializeStores();
+
+	userId.update(() => data.userId ?? '');
+	userName.update(() => data.name ?? '');
 
 	if (browser) {
 		if (!data.session) signIn();
@@ -23,9 +27,11 @@
 
 <AppBar />
 <div class="flex">
-	<Sidebar />
+	<Sidebar groups={data.groups ?? []} />
 
 	<Body>
 		{@render children()}
 	</Body>
 </div>
+
+<Toast />
