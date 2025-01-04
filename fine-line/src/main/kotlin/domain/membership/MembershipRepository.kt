@@ -8,4 +8,5 @@ interface MembershipRepository {
     fun addMembership(membership: Membership) : Either<RepositoryError, Boolean>;
     fun updateMembership(membership: Membership): Either<RepositoryError, Boolean>;
     fun getMembership(userId: String, groupId: Int): Either<RepositoryError, Membership?>;
+    fun deleteMembership(userId: String, groupId: Int): Either<RepositoryError, Boolean>
 }

@@ -6,11 +6,13 @@ import common.error.toRepositoryError
 import domain.membership.MembershipRepository
 import domain.membership.models.Membership
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 import repository.configurations.UserGroupTable
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class MembershipRepositoryImpl : MembershipRepository {
     override fun addMembership(membership: Membership): Either<RepositoryError, Boolean> {
@@ -57,8 +59,25 @@ class MembershipRepositoryImpl : MembershipRepository {
                 val membership =
                     UserGroupTable.select { (UserGroupTable.userId eq userId) and (UserGroupTable.groupId eq groupId) }
                         .singleOrNull()
-                if(membership == null) return@transaction Either.Right(null)
+
+                if (membership == null) return@transaction Either.Right(null)
                 Either.Right(mapToMembership(membership))
+            }
+        } catch (error: Throwable) {
+            Either.Left(error.toRepositoryError())
+        }
+    }
+
+    override fun deleteMembership(
+        userId: String,
+        groupId: Int
+    ): Either<RepositoryError, Boolean> {
+        return try {
+            transaction {
+                val deletedRows =
+                    UserGroupTable.deleteWhere { (UserGroupTable.userId eq userId) and (UserGroupTable.groupId eq groupId) }
+
+                Either.Right(deletedRows > 0)
             }
         } catch (error: Throwable) {
             Either.Left(error.toRepositoryError())

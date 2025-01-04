@@ -39,9 +39,7 @@ class MembershipServiceImpl(private val membershipRepository: MembershipReposito
             }
     }
 
-    override fun acceptMembership(userId: String, groupId: Int): Either<ErrorResponse, Membership> {
+    override fun updateMembership(membership: Membership): Either<ErrorResponse, Membership> {
         TODO("Not yet implemented")
     }
-
-
 }

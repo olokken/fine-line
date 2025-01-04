@@ -5,6 +5,6 @@
 	export let className: string = '';
 </script>
 
-<div class={`card card-hover flex flex-col p-4 ${className} items-center`}>
+<div class={`card card-hover flex p-4 ${className} items-center`}>
 	{@render children()}
 </div>

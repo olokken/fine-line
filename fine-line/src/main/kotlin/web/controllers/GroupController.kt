@@ -10,6 +10,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import web.dtos.group.GroupCreateDto
 import web.dtos.group.GroupDto
+import web.dtos.group.toDetailDto
 import web.dtos.group.toGroupDto
 import web.dtos.group.toModel
 import web.utils.getUserIdFromToken
@@ -24,6 +25,10 @@ class GroupController(private val groupService: GroupService) {
             post {
                 createGroup(call);
             }
+
+            get("{id}") {
+                getGroup(call)
+            }
         }
     }
 
@@ -31,7 +36,7 @@ class GroupController(private val groupService: GroupService) {
         val dto = call.receive<GroupCreateDto>();
         val userId = getUserIdFromToken(call)
 
-        if(userId == null) return call.respondText(
+        if (userId == null) return call.respondText(
             status = HttpStatusCode.fromValue(403),
             text = "Invalid token"
         )
@@ -49,5 +54,23 @@ class GroupController(private val groupService: GroupService) {
         val groups = groupService.getAllGroups();
         val groupDtos = groups.map { group -> group.toGroupDto() }.toList();
         return call.respond<List<GroupDto>>(groupDtos);
+    }
+
+    suspend fun getGroup(call: ApplicationCall) {
+        val idParam = call.parameters["id"]
+        val id = idParam?.toIntOrNull()
+
+        if (id == null) {
+            return call.respondText(status = HttpStatusCode.fromValue(404), text = "Group not found")
+        }
+
+        groupService.getGroup(id)
+            .foldSuspend({ error ->
+                call.respondText(
+                    status = HttpStatusCode.fromValue(error.statusCode),
+                    text = error.message
+                )
+            },
+                { group -> call.respond(group.toDetailDto()) })
     }
 }

@@ -10,6 +10,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import web.dtos.membership.RequestMembershipDto
 import web.utils.getUserIdFromToken
@@ -20,7 +21,15 @@ class MembershipController(private val membershipService: MembershipService) {
             post {
                 requestMembership(call)
             }
+
+            put {
+                updateMembership(call)
+            }
         }
+    }
+
+    suspend fun updateMembership(call: ApplicationCall) {
+        
     }
 
     suspend fun requestMembership(call: ApplicationCall) {

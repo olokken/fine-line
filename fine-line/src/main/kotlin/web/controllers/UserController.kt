@@ -11,6 +11,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.*
+import web.dtos.user.toUserDetailDto
 import web.dtos.user.toUserDto
 
 class UserController(private val userService: UserService) {
@@ -38,7 +39,7 @@ class UserController(private val userService: UserService) {
                         text = error.message
                     )
                 },
-                { user -> call.respond(user.toUserDto()) }
+                { user -> call.respond(user.toUserDetailDto()) }
             )
     }
 

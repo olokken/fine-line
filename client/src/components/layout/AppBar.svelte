@@ -14,8 +14,8 @@
 	};
 
 	export const drawerSettings: DrawerSettings = {
-		bgDrawer: 'bg-purple-900 text-white',
-		bgBackdrop: 'bg-gradient-to-tr from-indigo-500/50 via-purple-500/50 to-pink-500/50',
+		bgDrawer: 'bg-tertiary-500 text-white',
+		bgBackdrop: 'bg-gradient-to-tr from-secondary-500/50 via-secondary-500/50 to-tertiary-500/50',
 		width: 'w-[280px] md:w-[480px]',
 		padding: 'p-4',
 		rounded: 'rounded-xl'

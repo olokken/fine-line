@@ -24,7 +24,7 @@ const config = {
 	},
 	plugins: [
 		skeleton({
-			themes: { preset: ['modern'] }
+			themes: { preset: ['hamlindigo'] }
 		})
 	]
 } satisfies Config;

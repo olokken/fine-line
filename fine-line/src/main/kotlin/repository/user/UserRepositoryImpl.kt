@@ -39,7 +39,7 @@ class UserRepositoryImpl : UserRepository {
 
                 val groups = (UserGroupTable innerJoin GroupTable)
                     .select { (UserGroupTable.userId eq userId) and (UserGroupTable.status eq MembershipStatus.Accepted) }
-                    .map { mapToGroup(it) }
+                    .map { mapToGroup(it, emptyList()) }
 
                 val mappedUser = mapToUser(user, groups)
 

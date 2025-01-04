@@ -17,6 +17,7 @@
 				type="button"
 				href="/groups/browse">Create/Join Group</a
 			>
+
 			<ul>
 				<h3 class="h3 mb-4 text-center">Your groups</h3>
 				{#each groups as group}
