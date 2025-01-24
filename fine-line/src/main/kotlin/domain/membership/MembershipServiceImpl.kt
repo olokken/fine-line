@@ -16,8 +16,10 @@ class MembershipServiceImpl(private val membershipRepository: MembershipReposito
                 when (error.exceptionType) {
                     DatabaseExceptionType.UniqueConstraintViolation ->
                         ErrorResponse(400, "User is already a member or has requested membership")
+
                     DatabaseExceptionType.ForeignKeyConstraintViolation ->
                         ErrorResponse(400, "User or Group doesn't exist")
+
                     else ->
                         ErrorResponse(500, "Unknown database error")
                 }
@@ -39,7 +41,38 @@ class MembershipServiceImpl(private val membershipRepository: MembershipReposito
             }
     }
 
-    override fun updateMembership(membership: Membership): Either<ErrorResponse, Membership> {
-        TODO("Not yet implemented")
+    override fun updateMembership(membership: Membership, adminId: String): Either<ErrorResponse, Membership> {
+        return isUserAdmin(membership.groupId, adminId)
+            .mapLeft { error -> ErrorResponse(500, "Failed to check if user is admin") }
+            .flatMap { isAdmin ->
+                if (isAdmin == false) {
+                    return@flatMap Either.Left(ErrorResponse(403, "User is not admin"))
+                }
+
+                membershipRepository.updateMembership(membership)
+                    .mapLeft { error -> ErrorResponse(500, "Unknown error updating membership") }
+            }
+    }
+
+    override fun isUserAdmin(groupId: Int, userId: String): Either<ErrorResponse, Boolean> {
+        return membershipRepository.getMembership(userId, groupId)
+            .mapRight { membership ->
+                if (membership?.isAdmin == true) return@mapRight true;
+
+                false
+            }.mapLeft { error ->
+                ErrorResponse(500, "Unknown error")
+            }
+    }
+
+    override fun isUserAcceptedMember(groupId: Int, userId: String): Either<ErrorResponse, Boolean> {
+        return membershipRepository.getMembership(userId, groupId)
+            .mapRight { membership ->
+                if (membership?.status == MembershipStatus.Accepted) return@mapRight true;
+
+                false
+            }.mapLeft { error ->
+                ErrorResponse(500, "Unknown error")
+            }
     }
 }

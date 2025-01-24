@@ -6,8 +6,12 @@
 	import { userId } from '$lib/stores/user';
 	import { get } from 'svelte/store';
 	import { MembershipApi } from '$lib/api/membership.api';
+	import { getToastFromResponse } from '$lib/utils/request.utils';
+	import { getToastStore } from '@skeletonlabs/skeleton';
 
 	let { data }: { data: PageData } = $props();
+
+	const toastStore = getToastStore();
 
 	const onSearchTextChange = (text: string) => {
 		searchText = text;
@@ -20,10 +24,13 @@
 
 	const onRequestToJoin = async (groupId: number) => {
 		const id = get(userId);
-		await MembershipApi.requestMembership(data.session, {
+		const response = await MembershipApi.requestMembership(data.session, {
 			userId: id,
 			groupId: groupId
 		});
+
+		const toastResponse = getToastFromResponse(response, 'Requested to join group');
+		if (toastResponse) toastStore.trigger(toastResponse);
 	};
 </script>
 

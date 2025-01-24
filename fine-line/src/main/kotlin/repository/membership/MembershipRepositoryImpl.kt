@@ -33,7 +33,7 @@ class MembershipRepositoryImpl : MembershipRepository {
 
     override fun updateMembership(
         membership: Membership
-    ): Either<RepositoryError, Boolean> {
+    ): Either<RepositoryError, Membership> {
         return try {
             transaction {
                 UserGroupTable.update({
@@ -43,7 +43,7 @@ class MembershipRepositoryImpl : MembershipRepository {
                     row[UserGroupTable.status] = membership.status
                 }
 
-                Either.Right(true)
+                Either.Right(membership)
             }
         } catch (error: Throwable) {
             Either.Left(error.toRepositoryError())

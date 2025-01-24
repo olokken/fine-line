@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isGroupAdmin } from '$lib/stores/group';
 	import Card from './Card.svelte';
 	import { Lock, UserPlus, User, Plus, X } from 'lucide-svelte';
 
@@ -25,7 +26,7 @@
 	</div>
 
 	<div>
-		{#if userType === 'RequestedMember'}
+		{#if userType === 'RequestedMember' && $isGroupAdmin}
 			<button class="variant-filled btn-icon" onclick={upgradeUser}><Plus /></button>
 			<button class="variant-filled btn-icon" onclick={downgradeUser}><X /></button>
 		{/if}

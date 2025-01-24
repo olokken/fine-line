@@ -1,3 +1,4 @@
+import type { FineTypeDto } from './fineTypes';
 import type { UserDto } from './user';
 
 export type CreateGroupDto = {
@@ -12,6 +13,7 @@ export type GroupDto = {
 export type GroupDetailDto = {
 	groupId: number;
 	name: string;
+	fineTypes: FineTypeDto[];
 	admins: UserDto[];
 	members: UserDto[];
 	pendingMembers: UserDto[];

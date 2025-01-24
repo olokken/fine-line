@@ -1,5 +1,6 @@
 package repository.group
 
+import domain.fineType.models.FineType
 import domain.group.models.Group
 import domain.user.models.User
 import org.jetbrains.exposed.sql.ResultRow
@@ -21,13 +22,14 @@ fun UserInGroup.toUser(): User {
 }
 
 
-fun mapToGroup(row: ResultRow, users: List<UserInGroup>): Group {
+fun mapToGroup(row: ResultRow, users: List<UserInGroup>, fineTypes: List<FineType>): Group {
     return Group(
         groupId = row[GroupTable.groupId],
         name = row[GroupTable.name],
         admins = users.filter { u -> u.status == MembershipStatus.Accepted && u.isAdmin == true }.map { it.toUser() },
         members = users.filter { u -> u.status == MembershipStatus.Accepted && u.isAdmin == false }.map { it.toUser() },
-        pendingMembers = users.filter { u -> u.status == MembershipStatus.Requested }.map { it.toUser() }
+        pendingMembers = users.filter { u -> u.status == MembershipStatus.Requested }.map { it.toUser() },
+        fineTypes = fineTypes
     )
 }
 

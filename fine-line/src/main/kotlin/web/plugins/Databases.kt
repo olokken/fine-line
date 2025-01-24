@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import repository.configurations.GroupTable
 import io.github.cdimascio.dotenv.dotenv
+import repository.configurations.FineTypeTable
 import repository.configurations.UserGroupTable
 import repository.configurations.UserTable
 
@@ -32,6 +33,7 @@ fun Application.configureDatabases() {
             SchemaUtils.createMissingTablesAndColumns(GroupTable)
             SchemaUtils.createMissingTablesAndColumns(UserTable)
             SchemaUtils.createMissingTablesAndColumns(UserGroupTable)
+            SchemaUtils.createMissingTablesAndColumns(FineTypeTable)
         }
     }
 }

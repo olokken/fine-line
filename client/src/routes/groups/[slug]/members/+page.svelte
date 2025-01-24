@@ -1,19 +1,40 @@
 <script lang="ts">
+	import { MembershipApi } from '$lib/api/membership.api';
 	import { group } from '$lib/stores/group';
+	import { getToastFromResponse } from '$lib/utils/request.utils';
+	import { getToastStore } from '@skeletonlabs/skeleton';
 	import UserCard from '../../../../components/generic/card/UserCard.svelte';
+	import type { PageData } from './$types';
 
-	const onAddUser = () => {
-		console.log('Godkjenner');
+	let { data }: { data: PageData } = $props();
+
+	const toastStore = getToastStore();
+
+	const onAddUser = async (userId: string) => {
+		const response = await MembershipApi.handleMembershipRequest(data.session, {
+			userId: userId,
+			groupId: $group.groupId,
+			accepted: true
+		});
+
+		const toastResponse = getToastFromResponse(response, 'Successfully accepted user');
+		if (toastResponse) toastStore.trigger(toastResponse);
 	};
 
-	const onDeclineUser = () => {
-		console.log('Avviser');
+	const onDeclineUser = async (userId: string) => {
+		const response = await MembershipApi.handleMembershipRequest(data.session, {
+			userId: userId,
+			groupId: $group.groupId,
+			accepted: false
+		});
+
+		const toastResponse = getToastFromResponse(response, 'Successfully declined user');
+		if (toastResponse) toastStore.trigger(toastResponse);
 	};
 </script>
 
 <div class="flex flex-col gap-4">
-	<h1 class="h1">Members</h1>
-
+	<h2 class="h2">Members</h2>
 	{#if $group.pendingMembers.length > 0}
 		<ul class="list">
 			<h2 class="h2">Membership requests</h2>
@@ -22,15 +43,15 @@
 					<UserCard
 						name={pendingMember.name}
 						userType="RequestedMember"
-						upgradeUser={onAddUser}
-						downgradeUser={onDeclineUser}
+						upgradeUser={() => onAddUser(pendingMember.userId)}
+						downgradeUser={() => onDeclineUser(pendingMember.userId)}
 					/>
 				</li>
 			{/each}
 		</ul>
 	{/if}
 
-	<h2 class="h2">Admins</h2>
+	<h3 class="h3">Admins</h3>
 	<ul class="list">
 		{#each $group.admins as admin}
 			<li class="card card-hover w-full">
@@ -39,7 +60,7 @@
 		{/each}
 	</ul>
 
-	<h2 class="h2">Members</h2>
+	<h3 class="h3">Members</h3>
 	<ul class="list">
 		{#each $group.members as member}
 			<li class="card card-hover w-full">

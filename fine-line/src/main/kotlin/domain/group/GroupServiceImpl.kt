@@ -41,21 +41,29 @@ class GroupServiceImpl(private val groupRepository: GroupRepository, private val
                             name = group.name,
                             admins = emptyList(),
                             members = emptyList(),
-                            pendingMembers = emptyList()
+                            pendingMembers = emptyList(),
+                            fineTypes = emptyList()
                         )
                     }
             }
 
-    override fun getGroup(groupId: Int): Either<ErrorResponse, Group> {
-        //Remember to check if user that asks is Accepted member
-        return groupRepository.getGroup(groupId)
-            .mapLeft { ErrorResponse(500, "Unknown error") }
-            .flatMap { group ->
-                if (group == null) {
-                    return@flatMap Either.Left(ErrorResponse(404, "Group not found"))
-                }
+    override fun getGroup(groupId: Int, requestorId: String): Either<ErrorResponse, Group> {
+        return membershipService.isUserAcceptedMember(groupId, requestorId)
+            .mapLeft { ErrorResponse(500, "Unknown error checking if user is member") }
+            .flatMap { isAcceptedUser ->
+                if (isAcceptedUser == false) return@flatMap Either.Left(ErrorResponse(403, "User is not a member"))
 
-                Either.Right(group)
+                groupRepository.getGroup(groupId)
+                    .mapLeft { ErrorResponse(500, "Unknown error") }
+                    .flatMap { group ->
+                        if (group == null) {
+                            return@flatMap Either.Left(ErrorResponse(404, "Group not found"))
+                        }
+
+                        Either.Right(group)
+                    }
+
+
             }
     }
 }

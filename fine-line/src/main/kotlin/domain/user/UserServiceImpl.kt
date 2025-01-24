@@ -4,12 +4,12 @@ import common.either.Either
 import common.either.flatMap
 import common.either.mapLeft
 import common.error.ErrorResponse
-import domain.user.models.CreateUserModel
+import domain.user.models.UserCreateModel
 import domain.user.models.User
 import domain.user.models.UserService
 
 class UserServiceImpl(private val userRepository: UserRepository) : UserService {
-    override fun createOrGetUser(user: CreateUserModel): Either<ErrorResponse, User> {
+    override fun createOrGetUser(user: UserCreateModel): Either<ErrorResponse, User> {
         return userRepository.getUser(user.userId)
             .flatMap { existingUser ->
                 if(existingUser != null) return@flatMap Either.Right(existingUser)

@@ -5,7 +5,7 @@ import common.error.RepositoryError
 import common.error.toRepositoryError
 import domain.membership.models.MembershipStatus
 import domain.user.UserRepository
-import domain.user.models.CreateUserModel
+import domain.user.models.UserCreateModel
 import domain.user.models.User
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
@@ -17,7 +17,7 @@ import repository.configurations.UserTable
 import repository.group.mapToGroup
 
 class UserRepositoryImpl : UserRepository {
-    override fun createUser(user: CreateUserModel): Either<RepositoryError, User> {
+    override fun createUser(user: UserCreateModel): Either<RepositoryError, User> {
         return try {
             transaction {
                 UserTable.insert { row ->
@@ -39,7 +39,7 @@ class UserRepositoryImpl : UserRepository {
 
                 val groups = (UserGroupTable innerJoin GroupTable)
                     .select { (UserGroupTable.userId eq userId) and (UserGroupTable.status eq MembershipStatus.Accepted) }
-                    .map { mapToGroup(it, emptyList()) }
+                    .map { mapToGroup(it, emptyList(), emptyList()) }
 
                 val mappedUser = mapToUser(user, groups)
 

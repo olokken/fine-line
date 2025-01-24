@@ -8,5 +8,5 @@ import domain.group.models.GroupCreateModel
 interface GroupService {
     fun getAllGroups(): List<Group>
     fun createGroup(group: GroupCreateModel): Either<ErrorResponse, Group>
-    fun getGroup(groupId: Int): Either<ErrorResponse, Group>
+    fun getGroup(groupId: Int, requestorId: String): Either<ErrorResponse, Group>
 }

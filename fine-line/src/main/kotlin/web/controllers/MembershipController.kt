@@ -2,6 +2,8 @@ package web.controllers
 
 import common.either.foldSuspend
 import domain.membership.MembershipService
+import domain.membership.models.Membership
+import domain.membership.models.MembershipStatus
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
@@ -13,6 +15,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import web.dtos.membership.RequestMembershipDto
+import web.dtos.membership.UpdateRequestedMembershipDto
 import web.utils.getUserIdFromToken
 
 class MembershipController(private val membershipService: MembershipService) {
@@ -23,13 +26,30 @@ class MembershipController(private val membershipService: MembershipService) {
             }
 
             put {
-                updateMembership(call)
+                updateMembershipStatus(call)
             }
         }
     }
 
-    suspend fun updateMembership(call: ApplicationCall) {
-        
+    suspend fun updateMembershipStatus(call: ApplicationCall) {
+        val dto = call.receive<UpdateRequestedMembershipDto>()
+        val adminId = getUserIdFromToken(call)
+
+        if (adminId == null) {
+            return call.respond(HttpStatusCode.Unauthorized, "Unauthorized request")
+        }
+
+        val status = if (dto.accepted) MembershipStatus.Accepted else MembershipStatus.Rejected;
+
+        val memberShip = Membership(dto.userId, dto.groupId, false, status)
+
+        membershipService.updateMembership(memberShip, adminId).foldSuspend({ error ->
+                call.respondText(
+                    status = HttpStatusCode.fromValue(error.statusCode), text = error.message
+                )
+            }, { memberShip ->
+                call.respond(memberShip)
+            })
     }
 
     suspend fun requestMembership(call: ApplicationCall) {
@@ -38,16 +58,13 @@ class MembershipController(private val membershipService: MembershipService) {
 
         if (dto.userId != userId) {
             return call.respondText(
-                status = HttpStatusCode.fromValue(403),
-                text = "Only allowed to request your own membership"
+                status = HttpStatusCode.fromValue(403), text = "Only allowed to request your own membership"
             )
         }
 
-        membershipService.requestMembership(dto.userId, dto.groupId)
-            .foldSuspend({ error ->
+        membershipService.requestMembership(dto.userId, dto.groupId).foldSuspend({ error ->
                 call.respondText(
-                    status = HttpStatusCode.fromValue(error.statusCode),
-                    text = error.message
+                    status = HttpStatusCode.fromValue(error.statusCode), text = error.message
                 )
             }, { membership ->
                 call.respond(membership)

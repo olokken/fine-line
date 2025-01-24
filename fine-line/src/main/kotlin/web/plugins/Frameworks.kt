@@ -1,6 +1,9 @@
 package web.plugins
 
 import com.auth0.jwk.UrlJwkProvider
+import domain.fineType.FineTypeRepository
+import domain.fineType.FineTypeService
+import domain.fineType.FineTypeServiceImpl
 import domain.group.GroupRepository
 import domain.group.GroupService
 import domain.group.GroupServiceImpl
@@ -26,7 +29,9 @@ import repository.group.GroupRepositoryImpl
 import repository.membership.MembershipRepositoryImpl
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.cors.routing.*
+import repository.fineType.FineTypeRepositoryImpl
 import repository.user.UserRepositoryImpl
+import web.controllers.FineTypeController
 import web.controllers.MembershipController
 import web.controllers.UserController
 import java.net.URL
@@ -58,16 +63,19 @@ fun Application.configureFrameworks() {
             single<MembershipRepository> { MembershipRepositoryImpl() }
             single<GroupRepository> { GroupRepositoryImpl() }
             single<UserRepository> { UserRepositoryImpl() }
+            single<FineTypeRepository> { FineTypeRepositoryImpl() }
 
             //Services
             single<MembershipService> { MembershipServiceImpl(get()) }
             single<GroupService> { GroupServiceImpl(get(), get()) }
             single<UserService> { UserServiceImpl(get()) }
+            single<FineTypeService> { FineTypeServiceImpl(get()) }
 
             //Controllers
             single { GroupController(get()) }
             single { UserController(get()) }
             single { MembershipController(get()) }
+            single { FineTypeController(get()) }
         })
     }
 

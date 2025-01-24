@@ -8,3 +8,9 @@ export type Membership = {
 	groupId: number;
 	isAdmin: boolean;
 };
+
+export type UpdateRequestedMembershipDto = {
+	userId: string;
+	groupId: number;
+	accepted: boolean;
+};

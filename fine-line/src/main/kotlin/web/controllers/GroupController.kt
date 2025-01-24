@@ -59,12 +59,17 @@ class GroupController(private val groupService: GroupService) {
     suspend fun getGroup(call: ApplicationCall) {
         val idParam = call.parameters["id"]
         val id = idParam?.toIntOrNull()
+        val requestorId = getUserIdFromToken(call)
+
+        if (requestorId == null) {
+            return call.respond(HttpStatusCode.Unauthorized, "Unauthorized request")
+        }
 
         if (id == null) {
             return call.respondText(status = HttpStatusCode.fromValue(404), text = "Group not found")
         }
 
-        groupService.getGroup(id)
+        groupService.getGroup(id, requestorId)
             .foldSuspend({ error ->
                 call.respondText(
                     status = HttpStatusCode.fromValue(error.statusCode),

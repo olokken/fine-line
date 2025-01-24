@@ -1,7 +1,11 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { removeOneSegment } from '$lib/utils/paths.utils';
 	import { MoveLeft } from 'lucide-svelte';
+
 	const goBack = () => {
-		history.back();
+		const newPath = removeOneSegment(window.location.pathname);
+		goto(newPath);
 	};
 </script>
 
