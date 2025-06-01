@@ -51,5 +51,9 @@ fun <A> A.right(): Either<Nothing, A> = Either.Right(this)
 fun <T> Result<T>.toEither(): Either<Throwable, T> =
     this
         .map { it.right() }
-        .getOrElse { throwable -> throwable.left()
+        .getOrElse { throwable ->
+            throwable.left()
         }
+
+fun <A, B> Either<A, B>.isLeft(): Boolean = this is Either.Left
+fun <A, B> Either<A, B>.isRight(): Boolean = this is Either.Right

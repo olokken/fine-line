@@ -51,7 +51,7 @@ class GroupServiceImpl(private val groupRepository: GroupRepository, private val
         return membershipService.isUserAcceptedMember(groupId, requestorId)
             .mapLeft { ErrorResponse(500, "Unknown error checking if user is member") }
             .flatMap { isAcceptedUser ->
-                if (isAcceptedUser == false) return@flatMap Either.Left(ErrorResponse(403, "User is not a member"))
+                if (!isAcceptedUser) return@flatMap Either.Left(ErrorResponse(403, "User is not a member"))
 
                 groupRepository.getGroup(groupId)
                     .mapLeft { ErrorResponse(500, "Unknown error") }

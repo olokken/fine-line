@@ -1,4 +1,4 @@
-import { fineTypeApi } from '$lib/api/fintType.api';
+import { FineTypeApi } from '$lib/api/fintType.api';
 import type { CreateFineTypeDto } from '$lib/models/fineTypes';
 import type { Actions } from './$types';
 
@@ -13,6 +13,6 @@ export const actions = {
 			sum: Number(formData.get('sum'))
 		};
 
-		return await fineTypeApi.createFineType(event, createFineTypeDto);
+		return await FineTypeApi.createFineType(event, createFineTypeDto);
 	}
 } satisfies Actions;

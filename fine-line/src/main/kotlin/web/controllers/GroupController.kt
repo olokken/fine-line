@@ -13,9 +13,8 @@ import web.dtos.group.GroupDto
 import web.dtos.group.toDetailDto
 import web.dtos.group.toGroupDto
 import web.dtos.group.toModel
-import web.utils.getUserIdFromToken
 
-class GroupController(private val groupService: GroupService) {
+class GroupController(private val groupService: GroupService): BaseController() {
     fun setUpRoutes(route: Route) {
         route.route("/api/v1/groups") {
             get {

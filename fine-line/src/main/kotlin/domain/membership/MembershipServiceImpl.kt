@@ -45,7 +45,7 @@ class MembershipServiceImpl(private val membershipRepository: MembershipReposito
         return isUserAdmin(membership.groupId, adminId)
             .mapLeft { error -> ErrorResponse(500, "Failed to check if user is admin") }
             .flatMap { isAdmin ->
-                if (isAdmin == false) {
+                if (!isAdmin) {
                     return@flatMap Either.Left(ErrorResponse(403, "User is not admin"))
                 }
 

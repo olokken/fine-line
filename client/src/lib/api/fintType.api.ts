@@ -10,4 +10,4 @@ const createFineType = async (event: ApiEvent, createFineTypeDto: CreateFineType
 	);
 };
 
-export const fineTypeApi = { createFineType };
+export const FineTypeApi = { createFineType };

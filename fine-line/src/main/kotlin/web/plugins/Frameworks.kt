@@ -1,6 +1,9 @@
 package web.plugins
 
 import com.auth0.jwk.UrlJwkProvider
+import domain.fine.FineRepository
+import domain.fine.FineService
+import domain.fine.FineServiceImpl
 import domain.fineType.FineTypeRepository
 import domain.fineType.FineTypeService
 import domain.fineType.FineTypeServiceImpl
@@ -19,7 +22,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.server.application.*
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
-import web.controllers.GroupController
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.auth.Authentication
@@ -29,12 +31,12 @@ import repository.group.GroupRepositoryImpl
 import repository.membership.MembershipRepositoryImpl
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.cors.routing.*
+import repository.fine.FineRepositoryImpl
 import repository.fineType.FineTypeRepositoryImpl
 import repository.user.UserRepositoryImpl
-import web.controllers.FineTypeController
-import web.controllers.MembershipController
-import web.controllers.UserController
+import web.controllers.*
 import java.net.URL
+import kotlin.math.sin
 
 fun Application.configureFrameworks() {
     val dotenv = dotenv {}
@@ -64,18 +66,21 @@ fun Application.configureFrameworks() {
             single<GroupRepository> { GroupRepositoryImpl() }
             single<UserRepository> { UserRepositoryImpl() }
             single<FineTypeRepository> { FineTypeRepositoryImpl() }
+            single< FineRepository> { FineRepositoryImpl() }
 
             //Services
             single<MembershipService> { MembershipServiceImpl(get()) }
             single<GroupService> { GroupServiceImpl(get(), get()) }
             single<UserService> { UserServiceImpl(get()) }
             single<FineTypeService> { FineTypeServiceImpl(get()) }
+            single< FineService> { FineServiceImpl(get()) }
 
             //Controllers
             single { GroupController(get()) }
             single { UserController(get()) }
             single { MembershipController(get()) }
             single { FineTypeController(get()) }
+            single { FineController(get()) }
         })
     }
 

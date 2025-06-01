@@ -5,11 +5,8 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Schema
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import repository.configurations.GroupTable
 import io.github.cdimascio.dotenv.dotenv
-import repository.configurations.FineTypeTable
-import repository.configurations.UserGroupTable
-import repository.configurations.UserTable
+import repository.configurations.*
 
 fun Application.configureDatabases() {
     val dotenv = dotenv {}
@@ -29,11 +26,12 @@ fun Application.configureDatabases() {
     }
 
     transaction {
-        Schema("fine_line").let { schema ->
+        Schema("fine_line").let {
             SchemaUtils.createMissingTablesAndColumns(GroupTable)
             SchemaUtils.createMissingTablesAndColumns(UserTable)
             SchemaUtils.createMissingTablesAndColumns(UserGroupTable)
             SchemaUtils.createMissingTablesAndColumns(FineTypeTable)
+            SchemaUtils.createMissingTablesAndColumns(FineTable)
         }
     }
 }

@@ -18,8 +18,16 @@ class FineTypeRepositoryImpl : FineTypeRepository {
                     row[description] = createModel.description
                     row[sum] = createModel.sum
                     row[groupId] = createModel.groupId
-                } get FineTypeTable.groupId
+                } get FineTypeTable.fineTypeId
             })
+        } catch (error: Throwable) {
+            Either.Left(error.toRepositoryError())
+        }
+    }
+
+    override fun isFineTypeInGroup(groupId: Int, fineTypeId: Int): Either<RepositoryError, Boolean> {
+        return try {
+
         } catch (error: Throwable) {
             Either.Left(error.toRepositoryError())
         }

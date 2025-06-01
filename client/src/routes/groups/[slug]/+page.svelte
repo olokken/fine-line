@@ -10,7 +10,7 @@
 
 <div class="grid grid-cols-2 gap-4">
 	{#if $isGroupAdmin}
-		<MenyCard title="Hand out fines" href=""><BadgeDollarSign {size} /></MenyCard>
+		<MenyCard title="Issue fines" href={`${basePath}/fine`}><BadgeDollarSign {size} /></MenyCard>
 	{/if}
 
 	<MenyCard title="Leaderboard" href=""><Trophy {size} /></MenyCard>

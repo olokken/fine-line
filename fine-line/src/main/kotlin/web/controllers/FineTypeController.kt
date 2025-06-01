@@ -14,9 +14,8 @@ import io.ktor.server.routing.route
 import web.dtos.fineType.CreateFineTypeDto
 import web.dtos.fineType.toCreateModel
 import web.dtos.fineType.toDto
-import web.utils.getUserIdFromToken
 
-class FineTypeController(private val fineTypeService: FineTypeService) {
+class FineTypeController(private val fineTypeService: FineTypeService): BaseController() {
     fun setUpRoutes(route: Route) {
         route.route("/api/v1/groups/fineTypes") {
             post {
